@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Tokenization help for Python programs.
 
 tokenize(readline) is a generator that breaks a stream of bytes into
@@ -36,7 +38,7 @@ from token import *
 
 try:
     reASCII = re.ASCII
-except:
+except AttributeError:
     reASCII = 0
 
 
@@ -235,7 +237,7 @@ class TokenError(Exception): pass
 class StopTokenizing(Exception): pass
 
 
-class Untokenizer:
+class Untokenizer(object):
 
     def __init__(self):
         self.tokens = []
@@ -509,7 +511,7 @@ def _tokenize(readline, encoding):
         if encoding is not None:
             line = line.decode(encoding)
         lnum += 1
-        pos, max = 0, len(line)
+        pos, maximum = 0, len(line)
 
         if contstr:                            # continued string
             if not line:
@@ -535,7 +537,7 @@ def _tokenize(readline, encoding):
         elif parenlev == 0 and not continued:  # new statement
             if not line: break
             column = 0
-            while pos < max:                   # measure leading whitespace
+            while pos < maximum:                   # measure leading whitespace
                 if line[pos] == ' ':
                     column += 1
                 elif line[pos] == '\t':
@@ -545,7 +547,7 @@ def _tokenize(readline, encoding):
                 else:
                     break
                 pos += 1
-            if pos == max:
+            if pos == maximum:
                 break
 
             if line[pos] in '#\r\n':           # skip comments or blank lines
@@ -577,7 +579,7 @@ def _tokenize(readline, encoding):
                 raise TokenError("EOF in multi-line statement", (lnum, 0))
             continued = 0
 
-        while pos < max:
+        while pos < maximum:
             pseudomatch = _compile(PseudoToken).match(line, pos)
             if pseudomatch:                                # scan for tokens
                 start, end = pseudomatch.span(1)
